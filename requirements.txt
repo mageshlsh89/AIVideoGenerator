@@ -1,0 +1,7 @@
+
+streamlit
+requests
+ollama
+whisper
+ffmpeg-python
+Pillow
