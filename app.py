@@ -9,19 +9,32 @@ st.header("Step 1: Enter Prompt and Generate Script")
 prompt = st.text_area("Enter your idea or line:")
 language = st.selectbox("Select Language", ["English", "Tamil"])
 
+import requests
+
 def generate_script_with_ollama(prompt, language):
     model = "llama3" if language.lower() == "english" else "mistral"
     try:
         response = requests.post(
             "http://localhost:11434/api/generate",
-            json={"model": model, "prompt": prompt}
+            json={"model": model, "prompt": prompt},
+            stream=True  # Enable streaming
         )
         response.raise_for_status()
-        result = response.json()
-        return result.get("response", "No response from Ollama")
+
+        # Collect streamed chunks
+        script = ""
+        for line in response.iter_lines():
+            if line:
+                try:
+                    chunk = line.decode("utf-8")
+                    data = eval(chunk) if chunk.startswith("{") else {}
+                    script += data.get("response", "")
+                except Exception:
+                    continue
+        return script.strip()
     except requests.exceptions.RequestException as e:
         return f"Error communicating with Ollama: {e}"
-
+        
 if st.button("Generate Script"):
     if prompt:
         script = generate_script_with_ollama(prompt, language)
