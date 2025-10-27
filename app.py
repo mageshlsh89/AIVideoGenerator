@@ -20,10 +20,11 @@ if st.button("Upload & Process"):
     st.image("https://via.placeholder.com/400x200.png?text=Suggested+Video+Preview")
 
 # Step 3: Voiceover Section
-st.header("Step 3: Add Voiceover")
+st.header("Step 3: Add Voiceover and Generate Video")
 language = st.selectbox("Select Language", ["Tamil", "English"])
-if st.button("Build with Voiceover"):
-    st.success("Voiceover added successfully!")
+if st.button("Generate Video with Voiceover"):
+    st.success(f"Video generated with {language} voiceover!")
+    st.video("https://sample-videos.com/video123/mp4/720/big_buck_bunny_720p_1mb.mp4")
     st.download_button("Download 360p", "video_360p.mp4")
     st.download_button("Download 720p", "video_720p.mp4")
     st.download_button("Download HD", "video_hd.mp4")
