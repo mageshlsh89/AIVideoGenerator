@@ -4,12 +4,39 @@ import requests
 st.set_page_config(page_title="AI Video Generator", layout="wide")
 st.title("🎬 AI-Powered Video Generator")
 
-# Step 1: Prompt Input
-st.header("Step 1: Enter Prompt or Line")
+# import streamlit as st
+import requests
+
+st.set_page_config(page_title="AI Video Generator", layout="wide")
+st.title("🎬 AI-Powered Video Generator")
+
+# Step 1: Prompt Input and Script Generation
+st.header("Step 1: Enter Prompt and Generate Script")
 prompt = st.text_area("Enter your idea or line:")
-if st.button("Build Script"):
-    st.success("Script generated successfully!")
-    st.text_area("Generated Script", value="[Generated storyline will appear here]", height=200)
+language = st.selectbox("Select Language", ["English", "Tamil"])
+
+# Function to generate script using Ollama
+def generate_script_with_ollama(prompt, language):
+    model = "llama3" if language.lower() == "english" else "mistral"
+    try:
+        response = requests.post(
+            "http://localhost:11434/api/generate",
+            json={"model": model, "prompt": prompt}
+        )
+        response.raise_for_status()
+        result = response.json()
+        return result.get("response", "No response from Ollama")
+    except requests. exceptions.RequestException as e:
+        return f"Error communicating with Ollama: {e}"
+
+# Trigger script generation
+if st.button("Generate Script"):
+    if prompt:
+        script = generate_script_with_ollama(prompt, language)
+        st.text_area("Generated Script", value=script, height=300)
+    else:
+        st.warning("Please enter a prompt to generate the script.")
+``
 
 # Step 2: YouTube URL Input
 st.header("Step 2: Upload Reference Video")
