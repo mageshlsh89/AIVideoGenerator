@@ -11,25 +11,26 @@ language = st.selectbox("Select Language", ["English", "Tamil"])
 
 import requests
 
+import requests
+import json
+
 def generate_script_with_ollama(prompt, language):
     model = "llama3" if language.lower() == "english" else "mistral"
     try:
         response = requests.post(
             "http://localhost:11434/api/generate",
             json={"model": model, "prompt": prompt},
-            stream=True  # Enable streaming
+            stream=True
         )
         response.raise_for_status()
 
-        # Collect streamed chunks
         script = ""
         for line in response.iter_lines():
             if line:
                 try:
-                    chunk = line.decode("utf-8")
-                    data = eval(chunk) if chunk.startswith("{") else {}
+                    data = json.loads(line.decode("utf-8"))
                     script += data.get("response", "")
-                except Exception:
+                except json.JSONDecodeError:
                     continue
         return script.strip()
     except requests.exceptions.RequestException as e:
