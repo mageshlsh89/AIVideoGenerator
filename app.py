@@ -4,18 +4,11 @@ import requests
 st.set_page_config(page_title="AI Video Generator", layout="wide")
 st.title("🎬 AI-Powered Video Generator")
 
-# import streamlit as st
-import requests
-
-st.set_page_config(page_title="AI Video Generator", layout="wide")
-st.title("🎬 AI-Powered Video Generator")
-
 # Step 1: Prompt Input and Script Generation
 st.header("Step 1: Enter Prompt and Generate Script")
 prompt = st.text_area("Enter your idea or line:")
 language = st.selectbox("Select Language", ["English", "Tamil"])
 
-# Function to generate script using Ollama
 def generate_script_with_ollama(prompt, language):
     model = "llama3" if language.lower() == "english" else "mistral"
     try:
@@ -26,17 +19,15 @@ def generate_script_with_ollama(prompt, language):
         response.raise_for_status()
         result = response.json()
         return result.get("response", "No response from Ollama")
-    except requests. exceptions.RequestException as e:
+    except requests.exceptions.RequestException as e:
         return f"Error communicating with Ollama: {e}"
 
-# Trigger script generation
 if st.button("Generate Script"):
     if prompt:
         script = generate_script_with_ollama(prompt, language)
         st.text_area("Generated Script", value=script, height=300)
     else:
         st.warning("Please enter a prompt to generate the script.")
-``
 
 # Step 2: YouTube URL Input
 st.header("Step 2: Upload Reference Video")
@@ -48,7 +39,7 @@ if st.button("Upload & Process"):
 
 # Step 3: Voiceover Section
 st.header("Step 3: Add Voiceover and Generate Video")
-language = st.selectbox("Select Language", ["Tamil", "English"])
+language = st.selectbox("Select Voiceover Language", ["Tamil", "English"])
 if st.button("Generate Video with Voiceover"):
     st.success(f"Video generated with {language} voiceover!")
     st.video("https://sample-videos.com/video123/mp4/720/big_buck_bunny_720p_1mb.mp4")
