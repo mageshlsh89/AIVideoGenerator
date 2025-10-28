@@ -7,7 +7,7 @@ st.title("🎬 AI-Powered Video Generator")
 # Step 1: Prompt Input and Script Generation
 st.header("Step 1: Enter Prompt and Generate Script")
 prompt = st.text_area("Enter your idea or line:")
-language = st.selectbox("Select Language", ["English", "Tamil"])
+language = st.selectbox("Selectt Language", ["English", "Tamil"])
 
 import requests
 
