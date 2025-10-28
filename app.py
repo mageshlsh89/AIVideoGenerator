@@ -18,7 +18,7 @@ def generate_script_with_ollama(prompt, language):
     model = "llama3" if language.lower() == "english" else "mistral"
     try:
         response = requests.post(
-            "https://ollama-tunnel.trycloudflare.com/api/generate",
+            "http://localhost:8080/api/generate",
             json={"model": model, "prompt": prompt},
             stream=True
         )
