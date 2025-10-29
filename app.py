@@ -14,33 +14,40 @@ import requests
 import requests
 import json
 
-API_URL = "https://wicked-cloths-see.loca.lt"
+API_KEY = st.secrets["gemini"]["api_key"]
 
-def generate_script_with_ollama(prompt, language):
-    model = "llama3" if language.lower() == "english" else "mistral"
+def generate_script_with_gemini(prompt, language):
+    import requests
+
+    API_KEY = "YOUR_API_KEY_HERE"  # Replace with your actual Gemini API key
+    GEMINI_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent"
+
+    headers = {
+        "Authorization": f"Bearer {API_KEY}",
+        "Content-Type": "application/json"
+    }
+
+    data = {
+        "contents": [
+            {
+                "parts": [
+                    {"text": f"Write a short video script in {language} for the following idea:\n{prompt}"}
+                ]
+            }
+        ]
+    }
+
     try:
-        response = requests.post(
-            API_URL,
-            json={"model": model, "prompt": prompt},
-            stream=True
-        )
+        response = requests.post(GEMINI_URL, headers=headers, json=data)
         response.raise_for_status()
+        result = response.json()
+        return result["candidates"][0]["content"]["parts"][0]["text"]
+    except Exception as e:
+        return f"Error communicating with Gemini: {e}"
 
-        script = ""
-        for line in response.iter_lines():
-            if line:
-                try:
-                    data = json.loads(line.decode("utf-8"))
-                    script += data.get("response", "")
-                except json.JSONDecodeError:
-                    continue
-        return script.strip()
-    except requests.exceptions.RequestException as e:
-        return f"Error communicating with Ollama: {e}"
-        
 if st.button("Generate Script"):
     if prompt:
-        script = generate_script_with_ollama(prompt, language)
+        script = generate_script_with_gemini(prompt, language)
         st.text_area("Generated Script", value=script, height=300)
     else:
         st.warning("Please enter a prompt to generate the script.")
