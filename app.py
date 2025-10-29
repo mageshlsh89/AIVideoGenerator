@@ -14,7 +14,7 @@ import requests
 import requests
 import json
 
-API_URL = "https://hungry-hornets-write.loca.lt"
+API_URL = "https://wicked-cloths-see.loca.lt"
 
 def generate_script_with_ollama(prompt, language):
     model = "llama3" if language.lower() == "english" else "mistral"
