@@ -1,5 +1,6 @@
 import streamlit as st
 import requests
+import json  # ✅ Needed for parsing Ollama response
 
 st.set_page_config(page_title="AI Video Generator", layout="wide")
 st.title("🎬 AI-Powered Video Generator")
@@ -7,46 +8,33 @@ st.title("🎬 AI-Powered Video Generator")
 # Step 1: Prompt Input and Script Generation
 st.header("Step 1: Enter Prompt and Generate Script")
 prompt = st.text_area("Enter your idea or line:")
-language = st.selectbox("Selectt Language", ["English", "Tamil"])
+language = st.selectbox("Select Language", ["English", "Tamil"])
 
-import requests
-
-import requests
-import json
-
-
-def generate_script_with_gemini(prompt, language):
-    import requests
-
-    API_KEY = "AIzaSyCF3kD5q94OnpMSnetHROhhBWjy7D2h-ek" # Replace with your actual Gemini API key
-    GEMINI_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent"
-
-    headers = {
-        "Authorization": f"Bearer {API_KEY}",
-        "Content-Type": "application/json"
-    }
-
-    data = {
-        "contents": [
-            {
-                "parts": [
-                    {"text": f"Write a short video script in {language} for the following idea:\n{prompt}"}
-                ]
-            }
-        ]
-    }
-
+def generate_script_with_ollama(prompt, language):
     try:
-        response = requests.post(GEMINI_URL, headers=headers, json=data)
-        response.raise_for_status()
-        result = response.json()
-        return result["candidates"][0]["content"]["parts"][0]["text"]
+        ollama_prompt = f"Write a short video script in {language} for this idea:\n{prompt}"
+        response = requests.post("http://localhost:11434/api/generate", json={
+            "model": "mistral",
+            "prompt": ollama_prompt
+        }, stream=True)
+
+        output = ""
+        for line in response.iter_lines():
+            if line:
+                chunk = line.decode("utf-8")
+                try:
+                    part = json.loads(chunk)
+                    output += part.get("response", "")
+                except json.JSONDecodeError:
+                    continue  # skip malformed chunks
+
+        return output.strip()
     except Exception as e:
-        return f"Error communicating with Gemini: {e}"
+        return f"Error communicating with Ollama: {e}"
 
 if st.button("Generate Script"):
     if prompt:
-        script = generate_script_with_gemini(prompt, language)
+        script = generate_script_with_ollama(prompt, language)
         st.text_area("Generated Script", value=script, height=300)
     else:
         st.warning("Please enter a prompt to generate the script.")
@@ -61,9 +49,9 @@ if st.button("Upload & Process"):
 
 # Step 3: Voiceover Section
 st.header("Step 3: Add Voiceover and Generate Video")
-language = st.selectbox("Select Voiceover Language", ["Tamil", "English"])
+voice_language = st.selectbox("Select Voiceover Language", ["Tamil", "English"])
 if st.button("Generate Video with Voiceover"):
-    st.success(f"Video generated with {language} voiceover!")
+    st.success(f"Video generated with {voice_language} voiceover!")
     st.video("https://sample-videos.com/video123/mp4/720/big_buck_bunny_720p_1mb.mp4")
     st.download_button("Download 360p", "video_360p.mp4")
     st.download_button("Download 720p", "video_720p.mp4")
