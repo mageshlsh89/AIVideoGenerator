@@ -14,7 +14,7 @@ import requests
 import requests
 import json
 
-API_URL = "https://ollamafreeapi.onrender.com/api/generate"
+API_URL = "https://ollamafreeapi.onrender.com/api/chat"
 
 def generate_script_with_ollama(prompt, language):
     model = "llama3" if language.lower() == "english" else "mistral"
