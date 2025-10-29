@@ -14,11 +14,13 @@ import requests
 import requests
 import json
 
+API_URL = "https://ollamafreeapi.onrender.com/api/generate"
+
 def generate_script_with_ollama(prompt, language):
     model = "llama3" if language.lower() == "english" else "mistral"
     try:
         response = requests.post(
-            "http://localhost:11435/api/generate",
+            API_URL,
             json={"model": model, "prompt": prompt},
             stream=True
         )
