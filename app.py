@@ -14,12 +14,11 @@ import requests
 import requests
 import json
 
-API_KEY = st.secrets["gemini"]["api_key"]
 
 def generate_script_with_gemini(prompt, language):
     import requests
 
-    API_KEY = "YOUR_API_KEY_HERE"  # Replace with your actual Gemini API key
+    API_KEY = st.secrets["gemini"]["api_key"] # Replace with your actual Gemini API key
     GEMINI_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent"
 
     headers = {
